@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import React from 'react';
 import { Chip, Divider, IconButton, Searchbar, Text } from 'react-native-paper';
-
+import Cards from './Cards';
 const Repairs = () => {
   return (
     <ScrollView style={{ paddingHorizontal: 16 }}>
@@ -26,7 +26,7 @@ const Repairs = () => {
         <Chip style={styles.chipTab}>Completed</Chip>
       </View>
       <View>
-        <Text>No Data</Text>
+        <Cards />
       </View>
     </ScrollView>
   );
@@ -36,7 +36,7 @@ export default Repairs;
 
 const styles = StyleSheet.create({
   heading: {
-    marginTop: 48,
+    marginTop: 24,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
