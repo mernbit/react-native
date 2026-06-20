@@ -4,7 +4,6 @@ import TabProvider from './src/contexts/TabContext';
 import Routes from './src/screens/index';
 function App() {
   const isDark = useColorScheme() === 'dark';
-
   return (
     <SafeAreaProvider style={{ backgroundColor: 'white' }}>
       <SafeAreaView style={{ flex: 1 }}>

@@ -1,8 +1,16 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Chip, Divider, IconButton, Searchbar, Text } from 'react-native-paper';
+import {
+  Chip,
+  Divider,
+  Icon,
+  IconButton,
+  Searchbar,
+  Text,
+} from 'react-native-paper';
 import Cards from './Cards';
 import { useTabContext } from '../../contexts/TabContext';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 
 const Repairs = () => {
   const [activeChip, setActiveChip] = useState('All');
@@ -31,6 +39,18 @@ const Repairs = () => {
 
   return (
     <ScrollView style={{ paddingHorizontal: 16 }}>
+      <View
+        style={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Text variant="titleMedium">App Name | Repairs</Text>
+        <IconButton icon={() => <MaterialDesignIcons name="cog" size={30} />} />
+      </View>
       <View style={styles.heading}>
         <Text style={{ fontWeight: 'semibold' }} variant="displaySmall">
           Repairs Orders

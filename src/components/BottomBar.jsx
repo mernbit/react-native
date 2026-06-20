@@ -4,10 +4,11 @@ import { Divider, IconButton } from 'react-native-paper';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTabContext } from '../contexts/TabContext';
-
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const BottomBar = ({ path }) => {
   const navigation = useNavigation();
   // const currentRoute = path;
+  const tab = createBottomTabNavigator();
   const { activeTab, setActiveTab } = useTabContext();
   const BottomItems = [
     {
@@ -43,7 +44,11 @@ const BottomBar = ({ path }) => {
   ];
   const BottomBarNavTo = route => {
     if (route === activeTab) return;
-    navigation.navigate(route);
+    // navigation.navigate(route);
+    navigation.reset({
+      index: 0,
+      routes: [{ name: route }],
+    });
   };
   return (
     <View>

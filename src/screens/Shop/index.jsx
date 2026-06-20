@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import ProductLibrary from './ProductLibrary';
+import Analysis from './Analysis';
+import { useTabContext } from '../../contexts/TabContext';
 
 const Shop = () => {
   const [activeTab, setActiveTab] = useState('Library');
+  // const { setActiveTab: setBottomTab } = useTabContext();
   const tabs = [
     {
       id: 1,
@@ -30,17 +34,16 @@ const Shop = () => {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          gap: 8,
+          gap: 0,
           backgroundColor: '#f2f2f2',
-          padding: 2,
+          paddingVertical: 2,
           borderRadius: 50,
         }}
       >
         {tabs.map(tab => (
-          <View
+          <Pressable
             key={tab.id}
             onPress={() => {
-              console.log(tab.name);
               setActiveTab(tab.label);
             }}
             style={{
@@ -60,9 +63,10 @@ const Shop = () => {
             >
               {tab.name}
             </Text>
-          </View>
+          </Pressable>
         ))}
       </View>
+      <View>{activeTab === 'Library' ? <ProductLibrary /> : <Analysis />}</View>
     </ScrollView>
   );
 };
