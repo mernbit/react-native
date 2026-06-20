@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { Divider, IconButton } from 'react-native-paper';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTabContext } from '../contexts/TabContext';
 
-const BottomBar = () => {
-  // const route = useRoute();
+const BottomBar = ({ path }) => {
   const navigation = useNavigation();
-  const [activeTab, setActiveTab] = useState('Repairs');
+  // const currentRoute = path;
+  const { activeTab, setActiveTab } = useTabContext();
   const BottomItems = [
     {
       id: 1,
@@ -42,10 +43,8 @@ const BottomBar = () => {
   ];
   const BottomBarNavTo = route => {
     if (route === activeTab) return;
-    setActiveTab(route);
     navigation.navigate(route);
   };
-  // console.log(navigation);
   return (
     <View>
       <Divider />
