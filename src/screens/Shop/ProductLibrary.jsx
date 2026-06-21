@@ -1,13 +1,20 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import React, { useState } from 'react';
-import { Card, Chip, Searchbar, Modal, Button } from 'react-native-paper';
+import {
+  Card,
+  Chip,
+  Searchbar,
+  Modal,
+  Button,
+  Text,
+  Portal,
+  TextInput,
+} from 'react-native-paper';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 
 const ProductLibrary = () => {
   const [visible, setVisible] = useState(false);
-
-  const showDialog = () => setVisible(true);
-  const hideDialog = () => setVisible(false);
+  const [categoryName, setCategoryName] = useState('');
   const chipItem = [
     {
       id: 1,
@@ -38,16 +45,19 @@ const ProductLibrary = () => {
       name: 'USB',
     },
   ];
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);
   const [category, setCategory] = useState(chipItem);
-  const addCategory = categoryName => {
+  const handleAddCategory = categoryName => {
+    if (!categoryName || categoryName.trim().length === 0) return;
     const newCategory = {
       id: Date.now(),
       name: categoryName.trim(),
     };
-
     setCategory(prev =>
       [...prev, newCategory].sort((a, b) => a.name.localeCompare(b.name)),
     );
+    hideDialog();
   };
   return (
     <View>
@@ -57,11 +67,9 @@ const ProductLibrary = () => {
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View style={styles.chipContainer}>
           {category.map(item => {
-            console.log(item);
-
             return (
               <Chip key={item.id} style={styles.chips}>
-                {item.name}
+                <Text>{item.name}</Text>
               </Chip>
             );
           })}
@@ -70,7 +78,7 @@ const ProductLibrary = () => {
             style={styles.chips}
             onPress={() => showDialog()}
           >
-            Add New
+            <Text>Add New</Text>
           </Chip>
         </View>
       </ScrollView>
@@ -79,24 +87,44 @@ const ProductLibrary = () => {
           <Text>Stock: X units, Sold: Y units</Text>
         </Card.Content>
       </Card>
-      <View>
+      <Portal>
         <Modal
           visible={visible}
           onDismiss={hideDialog}
           contentContainerStyle={styles.modal}
-          // dismissable={true}
-          theme={{
-            colors: {
-              backdrop: 'rgba(0, 0, 0, 0)',
-            },
-          }}
           dismissableBackButton={true}
         >
-          <Text>Add New Category</Text>
-          <Button onPress={hideDialog}>Cancel</Button>
-          <Button onPress={hideDialog}>Save</Button>
+          <Text variant="headlineSmall" style={styles.modalTitle}>
+            Add New Category
+          </Text>
+          <View>
+            <TextInput
+              cursorColor="gray"
+              label="Category"
+              style={styles.modalInput}
+              mode="outlined"
+              outlineStyle={{
+                borderRadius: 12,
+                borderWidth: 0,
+              }}
+              underlineColor="transparent"
+              activeUnderlineColor="transparent"
+              onChangeText={text => setCategoryName(text)}
+            />
+          </View>
+          <View style={styles.modalButtons}>
+            <Button style={{ backgroundColor: 'red' }} onPress={hideDialog}>
+              <Text style={{ color: 'white' }}>Cancel</Text>
+            </Button>
+            <Button
+              style={styles.modalbtn}
+              onPress={() => handleAddCategory(categoryName)}
+            >
+              <Text style={{ color: 'white' }}>Save</Text>
+            </Button>
+          </View>
         </Modal>
-      </View>
+      </Portal>
     </View>
   );
 };
@@ -108,7 +136,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     marginVertical: 16,
   },
-  // searchContainer: {},
   chipContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -128,8 +155,28 @@ const styles = StyleSheet.create({
   },
   modal: {
     backgroundColor: '#fff',
-    padding: 16,
+    padding: 20,
     borderRadius: 12,
     margin: 20,
+  },
+  modalTitle: {
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 8,
+  },
+  modalbtn: {
+    backgroundColor: 'black',
+    color: 'white',
+    borderRadius: 50,
+  },
+  modalInput: {
+    backgroundColor: '#f2f2f2',
+    marginVertical: 16,
+    borderRadius: 16,
+    borderWidth: 0,
   },
 });
