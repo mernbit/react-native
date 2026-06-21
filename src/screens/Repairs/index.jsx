@@ -1,13 +1,6 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import {
-  Chip,
-  Divider,
-  Icon,
-  IconButton,
-  Searchbar,
-  Text,
-} from 'react-native-paper';
+import { Chip, Divider, IconButton, Searchbar, Text } from 'react-native-paper';
 import Cards from './Cards';
 import { useTabContext } from '../../contexts/TabContext';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
@@ -48,12 +41,14 @@ const Repairs = () => {
           justifyContent: 'space-between',
         }}
       >
-        <Text variant="titleMedium">App Name | Repairs</Text>
+        <Text variant="titleMedium" style={{ color: 'gray' }}>
+          App Name | Repairs
+        </Text>
         <IconButton icon={() => <MaterialDesignIcons name="cog" size={30} />} />
       </View>
       <View style={styles.heading}>
         <Text style={{ fontWeight: 'semibold' }} variant="displaySmall">
-          Repairs Orders
+          Repair Orders
         </Text>
         <IconButton icon="plus" iconColor="white" style={styles.addBtn} />
       </View>
@@ -100,7 +95,7 @@ export default Repairs;
 
 const styles = StyleSheet.create({
   heading: {
-    marginTop: 24,
+    marginTop: 12,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

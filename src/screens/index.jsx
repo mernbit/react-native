@@ -1,11 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import {
-  BackHandler,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  View,
-} from 'react-native';
+import { BackHandler, StyleSheet, ToastAndroid, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   NavigationContainer,

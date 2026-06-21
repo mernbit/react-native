@@ -1,20 +1,25 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { Card, Chip, Searchbar } from 'react-native-paper';
+import React, { useState } from 'react';
+import { Card, Chip, Searchbar, Modal, Button } from 'react-native-paper';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 
 const ProductLibrary = () => {
+  const [visible, setVisible] = useState(false);
+
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);
   const chipItem = [
     {
       id: 1,
-      name: 'Chargers',
+      name: 'Batteries',
     },
     {
       id: 2,
-      name: 'Cables',
+      name: 'Chargers',
     },
     {
       id: 3,
-      name: 'Handsfree',
+      name: 'Cables',
     },
     {
       id: 4,
@@ -22,34 +27,76 @@ const ProductLibrary = () => {
     },
     {
       id: 5,
-      name: 'Memory Cards',
+      name: 'Handsfree',
     },
     {
       id: 6,
-      name: 'Batteries',
+      name: 'Memory Cards',
     },
     {
       id: 7,
       name: 'USB',
     },
   ];
+  const [category, setCategory] = useState(chipItem);
+  const addCategory = categoryName => {
+    const newCategory = {
+      id: Date.now(),
+      name: categoryName.trim(),
+    };
+
+    setCategory(prev =>
+      [...prev, newCategory].sort((a, b) => a.name.localeCompare(b.name)),
+    );
+  };
   return (
     <View>
-      <View style={styles.searchContainer}>
+      <View>
         <Searchbar placeholder="Search products" style={styles.search} />
       </View>
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View style={styles.chipContainer}>
-          {chipItem.map(item => (
-            <Chip style={styles.chips} key={item.id}>
-              {item.name}
-            </Chip>
-          ))}
+          {category.map(item => {
+            console.log(item);
+
+            return (
+              <Chip key={item.id} style={styles.chips}>
+                {item.name}
+              </Chip>
+            );
+          })}
+          <Chip
+            icon={() => <MaterialDesignIcons name="plus" size={16} />}
+            style={styles.chips}
+            onPress={() => showDialog()}
+          >
+            Add New
+          </Chip>
         </View>
       </ScrollView>
       <Card style={styles.card}>
-        <Card.Content></Card.Content>
+        <Card.Content>
+          <Text>Stock: X units, Sold: Y units</Text>
+        </Card.Content>
       </Card>
+      <View>
+        <Modal
+          visible={visible}
+          onDismiss={hideDialog}
+          contentContainerStyle={styles.modal}
+          // dismissable={true}
+          theme={{
+            colors: {
+              backdrop: 'rgba(0, 0, 0, 0)',
+            },
+          }}
+          dismissableBackButton={true}
+        >
+          <Text>Add New Category</Text>
+          <Button onPress={hideDialog}>Cancel</Button>
+          <Button onPress={hideDialog}>Save</Button>
+        </Modal>
+      </View>
     </View>
   );
 };
@@ -61,6 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     marginVertical: 16,
   },
+  // searchContainer: {},
   chipContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -77,5 +125,11 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#f2f2f2',
     borderRadius: 12,
+  },
+  modal: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    margin: 20,
   },
 });
