@@ -32,20 +32,6 @@ const Repairs = () => {
 
   return (
     <ScrollView style={{ paddingHorizontal: 16 }}>
-      <View
-        style={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Text variant="titleMedium" style={{ color: 'gray' }}>
-          App Name | Repairs
-        </Text>
-        <IconButton icon={() => <MaterialDesignIcons name="cog" size={30} />} />
-      </View>
       <View style={styles.heading}>
         <Text style={{ fontWeight: 'semibold' }} variant="displaySmall">
           Repair Orders

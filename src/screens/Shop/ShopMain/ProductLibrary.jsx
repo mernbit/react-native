@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import uuid from 'react-native-uuid';
 import {
@@ -13,8 +13,10 @@ import {
 } from 'react-native-paper';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const ProductLibrary = () => {
+  const navigation = useNavigation();
   const [customChip, setCustomChip] = useState([]);
   const [visible, setVisible] = useState(false);
   const [categoryName, setCategoryName] = useState('');
@@ -59,24 +61,32 @@ const ProductLibrary = () => {
   const hideDialog = () => setVisible(false);
   const [category, setCategory] = useState(chipItem);
 
+  // Chips are fetched from "customChips in AsyncStorage" and stored in 'stored' variable
   const getCustomChips = async () => {
     const stored = await AsyncStorage.getItem('customChips');
     if (stored) {
+      // If data exists in storage, it is parsed here and converted into JS
       setCustomChip(JSON.parse(stored));
     } else {
+      // If data does not exist in storage, it is set to an empty array
       setCustomChip([]);
     }
   };
 
   useEffect(() => {
     getCustomChips();
-  }, [customChip]);
+  }, []);
 
+  // Initialize custom chips
   useEffect(() => {
     const init = async () => {
+      // Get custom chips from storage
       const stored = await AsyncStorage.getItem('customChips');
+      // Parse custom chips
       const parsed = stored ? JSON.parse(stored) : [];
+      // Set custom chips
       setCustomChip(parsed);
+      // Set category
       setCategory(prev =>
         [...prev, ...parsed].sort((a, b) => a.name.localeCompare(b.name)),
       );
@@ -85,8 +95,6 @@ const ProductLibrary = () => {
   }, []);
 
   const handleAddCategory = async chip => {
-    console.log('Chip Recieved: ', chip);
-
     const newChip = {
       id: uuid.v4(),
       name: chip.trim(),
@@ -117,6 +125,7 @@ const ProductLibrary = () => {
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View style={styles.chipContainer}>
           {category.map(item => {
+            console.log(item);
             return (
               <Chip key={item.id} style={styles.chips}>
                 <Text>{item.name}</Text>
@@ -137,6 +146,14 @@ const ProductLibrary = () => {
           <Text>Stock: X units, Sold: Y units</Text>
         </Card.Content>
       </Card>
+      <Pressable
+        onPress={() => navigation.navigate('AddProduct')}
+        style={styles.addProduct}
+      >
+        <Text variant="titleMedium" style={{ color: 'gray' }}>
+          + Add Product
+        </Text>
+      </Pressable>
       <Portal>
         <Modal
           visible={visible}
@@ -162,6 +179,7 @@ const ProductLibrary = () => {
               onChangeText={text => setCategoryName(text)}
             />
             <View>
+              {/* Developer Use Only */}
               <Button
                 onPress={async () => {
                   await AsyncStorage.removeItem('customChips');
@@ -237,5 +255,18 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     borderRadius: 16,
     borderWidth: 0,
+  },
+  addProduct: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: '#f2f2f2',
+    marginTop: 16,
+    borderStyle: 'dashed',
+    borderRadius: 12,
   },
 });

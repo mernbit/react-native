@@ -10,7 +10,7 @@ function App() {
       <PaperProvider>
         <SafeAreaView style={{ flex: 1 }}>
           <StatusBar
-            barStyle={!isDark ? 'light-content' : 'dark-content'}
+            barStyle={isDark ? 'light-content' : 'dark-content'}
             backgroundColor={isDark ? '#121212' : '#fff'}
           />
           <TabProvider>

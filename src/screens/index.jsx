@@ -7,8 +7,9 @@ import {
 } from '@react-navigation/native';
 import { DefaultTheme } from 'react-native-paper';
 import BottomBar from '../components/BottomBar';
+import TopBar from '../components/TopBar';
 import Repairs from './Repairs';
-import Shop from './Shop';
+import Shop from './Shop/';
 import Spendings from './Spendings';
 import Sellers from './Sellers';
 import Resell from './Resell';
@@ -72,6 +73,7 @@ const Routes = () => {
       }}
     >
       <View style={{ flex: 1 }}>
+        <TopBar />
         <Stack.Navigator
           initialRouteName="Repairs"
           screenOptions={{ headerShown: false }}
