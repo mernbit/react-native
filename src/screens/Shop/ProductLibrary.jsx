@@ -1,5 +1,6 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import uuid from 'react-native-uuid';
 import {
   Card,
   Chip,
@@ -11,53 +12,102 @@ import {
   TextInput,
 } from 'react-native-paper';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProductLibrary = () => {
+  const [customChip, setCustomChip] = useState([]);
   const [visible, setVisible] = useState(false);
   const [categoryName, setCategoryName] = useState('');
   const chipItem = [
     {
       id: 1,
       name: 'Batteries',
+      custom: false,
     },
     {
       id: 2,
       name: 'Chargers',
+      custom: false,
     },
     {
       id: 3,
       name: 'Cables',
+      custom: false,
     },
     {
       id: 4,
       name: 'Cases',
+      custom: false,
     },
     {
       id: 5,
       name: 'Handsfree',
+      custom: false,
     },
     {
       id: 6,
       name: 'Memory Cards',
+      custom: false,
     },
     {
       id: 7,
       name: 'USB',
+      custom: false,
     },
   ];
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
   const [category, setCategory] = useState(chipItem);
-  const handleAddCategory = categoryName => {
-    if (!categoryName || categoryName.trim().length === 0) return;
-    const newCategory = {
-      id: Date.now(),
-      name: categoryName.trim(),
+
+  const getCustomChips = async () => {
+    const stored = await AsyncStorage.getItem('customChips');
+    if (stored) {
+      setCustomChip(JSON.parse(stored));
+    } else {
+      setCustomChip([]);
+    }
+  };
+
+  useEffect(() => {
+    getCustomChips();
+  }, [customChip]);
+
+  useEffect(() => {
+    const init = async () => {
+      const stored = await AsyncStorage.getItem('customChips');
+      const parsed = stored ? JSON.parse(stored) : [];
+      setCustomChip(parsed);
+      setCategory(prev =>
+        [...prev, ...parsed].sort((a, b) => a.name.localeCompare(b.name)),
+      );
     };
+    init();
+  }, []);
+
+  const handleAddCategory = async chip => {
+    console.log('Chip Recieved: ', chip);
+
+    const newChip = {
+      id: uuid.v4(),
+      name: chip.trim(),
+      custom: true,
+    };
+
+    if (customChip === null || customChip === undefined) {
+      setCustomChip([newChip]);
+      await AsyncStorage.setItem('customChips', JSON.stringify([newChip]));
+    } else {
+      setCustomChip(prev => [...prev, newChip]);
+      await AsyncStorage.setItem(
+        'customChips',
+        JSON.stringify([...customChip, newChip]),
+      );
+    }
     setCategory(prev =>
-      [...prev, newCategory].sort((a, b) => a.name.localeCompare(b.name)),
+      [...prev, newChip].sort((a, b) => a.name.localeCompare(b.name)),
     );
-    hideDialog();
+    setCategoryName('');
+    setVisible(false);
   };
   return (
     <View>
@@ -111,6 +161,15 @@ const ProductLibrary = () => {
               activeUnderlineColor="transparent"
               onChangeText={text => setCategoryName(text)}
             />
+            <View>
+              <Button
+                onPress={async () => {
+                  await AsyncStorage.removeItem('customChips');
+                }}
+              >
+                Delete all
+              </Button>
+            </View>
           </View>
           <View style={styles.modalButtons}>
             <Button style={{ backgroundColor: 'red' }} onPress={hideDialog}>
