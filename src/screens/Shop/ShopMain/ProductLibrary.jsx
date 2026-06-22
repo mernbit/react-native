@@ -1,5 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import uuid from 'react-native-uuid';
 import {
   Card,
@@ -22,77 +22,66 @@ const ProductLibrary = () => {
   const [categoryName, setCategoryName] = useState('');
   const chipItem = [
     {
-      id: 1,
+      id: '89808e2f-d834-409a-bdc8-40060ae20d74',
       name: 'Batteries',
       custom: false,
     },
     {
-      id: 2,
+      id: 'f0e762a5-f23d-45b5-8350-6459c0825575',
       name: 'Chargers',
       custom: false,
     },
     {
-      id: 3,
+      id: '124c43d3-017a-4fe7-a2d0-113bfbf52dcc',
       name: 'Cables',
       custom: false,
     },
     {
-      id: 4,
+      id: '196109e7-e0fe-4755-8364-3394d196f125',
       name: 'Cases',
       custom: false,
     },
     {
-      id: 5,
+      id: '09d02feb-e9d0-4688-adf6-0ca4335457fe',
       name: 'Handsfree',
       custom: false,
     },
     {
-      id: 6,
+      id: 'afcd24f5-9b69-4ffb-95f5-585c10154fe2',
       name: 'Memory Cards',
       custom: false,
     },
     {
-      id: 7,
+      id: '1c48b2e8-5cf4-4c06-b77b-2d1fc3713a36',
       name: 'USB',
       custom: false,
     },
   ];
+
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
-  const [category, setCategory] = useState(chipItem);
 
-  // Chips are fetched from "customChips in AsyncStorage" and stored in 'stored' variable
-  const getCustomChips = async () => {
-    const stored = await AsyncStorage.getItem('customChips');
-    if (stored) {
-      // If data exists in storage, it is parsed here and converted into JS
-      setCustomChip(JSON.parse(stored));
-    } else {
-      // If data does not exist in storage, it is set to an empty array
-      setCustomChip([]);
-    }
+  const storeCategory = async () => {
+    await AsyncStorage.setItem('chips', JSON.stringify(category));
   };
 
+  const category = useMemo(
+    () =>
+      [...chipItem, ...customChip].sort((a, b) => a.name.localeCompare(b.name)),
+    [customChip],
+  );
+
   useEffect(() => {
-    getCustomChips();
+    const loadCustomChips = async () => {
+      const stored = await AsyncStorage.getItem('customChips');
+      if (stored) setCustomChip(JSON.parse(stored));
+    };
+    loadCustomChips();
   }, []);
 
-  // Initialize custom chips
   useEffect(() => {
-    const init = async () => {
-      // Get custom chips from storage
-      const stored = await AsyncStorage.getItem('customChips');
-      // Parse custom chips
-      const parsed = stored ? JSON.parse(stored) : [];
-      // Set custom chips
-      setCustomChip(parsed);
-      // Set category
-      setCategory(prev =>
-        [...prev, ...parsed].sort((a, b) => a.name.localeCompare(b.name)),
-      );
-    };
-    init();
-  }, []);
+    AsyncStorage.setItem('customChips', JSON.stringify(customChip));
+  }, [customChip]);
 
   const handleAddCategory = async chip => {
     const newChip = {
@@ -100,20 +89,7 @@ const ProductLibrary = () => {
       name: chip.trim(),
       custom: true,
     };
-
-    if (customChip === null || customChip === undefined) {
-      setCustomChip([newChip]);
-      await AsyncStorage.setItem('customChips', JSON.stringify([newChip]));
-    } else {
-      setCustomChip(prev => [...prev, newChip]);
-      await AsyncStorage.setItem(
-        'customChips',
-        JSON.stringify([...customChip, newChip]),
-      );
-    }
-    setCategory(prev =>
-      [...prev, newChip].sort((a, b) => a.name.localeCompare(b.name)),
-    );
+    setCustomChip(prev => [...prev, newChip]);
     setCategoryName('');
     setVisible(false);
   };
@@ -125,7 +101,7 @@ const ProductLibrary = () => {
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View style={styles.chipContainer}>
           {category.map(item => {
-            console.log(item);
+            storeCategory([item]);
             return (
               <Chip key={item.id} style={styles.chips}>
                 <Text>{item.name}</Text>
@@ -178,16 +154,7 @@ const ProductLibrary = () => {
               activeUnderlineColor="transparent"
               onChangeText={text => setCategoryName(text)}
             />
-            <View>
-              {/* Developer Use Only */}
-              <Button
-                onPress={async () => {
-                  await AsyncStorage.removeItem('customChips');
-                }}
-              >
-                Delete all
-              </Button>
-            </View>
+            <View></View>
           </View>
           <View style={styles.modalButtons}>
             <Button style={{ backgroundColor: 'red' }} onPress={hideDialog}>

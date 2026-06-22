@@ -1,7 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import React, { useState } from 'react';
-
-const AddProduct = () => {
+import { Button, Divider, IconButton } from 'react-native-paper';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import { Text } from 'react-native-paper';
+import Form from './Form';
+const AddProduct = ({ navigation }) => {
   const initState = {
     name: '',
     category: '',
@@ -14,23 +17,46 @@ const AddProduct = () => {
 
   const [state, setState] = useState(initState);
   return (
-    <View style={{ paddingHorizontal: 16 }}>
-      <View>
-        <Text>Product Information</Text>
+    <ScrollView>
+      <View style={styles.heading}>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          <IconButton
+            icon={() => <MaterialDesignIcons name="arrow-left" size={24} />}
+            onPress={() => navigation.goBack()}
+          />
+          <Text variant="titleLarge">Add Product</Text>
+        </View>
+        <Button mode="contained" style={styles.saveBtn} onPress={() => {}}>
+          Save
+        </Button>
       </View>
-      <View>
-        <Text>Product Images</Text>
-      </View>
-      <View>
-        <Text>Product Pricing</Text>
-      </View>
-      <View>
-        <Text>Product Stock</Text>
-      </View>
-    </View>
+      <Divider />
+      {/* Add product form */}
+      <Form dispatch={setState} state={state} />
+    </ScrollView>
   );
 };
 
 export default AddProduct;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  heading: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+    marginTop: 16,
+    paddingHorizontal: 16,
+  },
+  saveBtn: {
+    backgroundColor: 'black',
+    borderRadius: 50,
+  },
+});
